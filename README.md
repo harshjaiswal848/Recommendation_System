@@ -21,8 +21,8 @@ Install dependencies:pip install -r requirements.txt
 
 How to Run
 
-Clone the repository:git clone https://github.com/yourusername/recommendation-system.git
-cd recommendation-system
+Clone the repository:git clone https://github.com/harshjaiswal848/Recommendation_System.git
+cd Recommendation_System
 
 
 Install dependencies:pip install -r requirements.txt
@@ -53,3 +53,8 @@ Compile presentation.tex using PDFLaTeX to generate the presentation PDF:
 pdflatex presentation.tex
 
 Ensure the plots/ directory contains the visualizations before compiling.
+
+This project is made by our TEAM : "DATA SURFERS"
+ Vani Gupta (23SCSE1010474)
+ Harsh Jaiswal (23SCSE1011377)
+ Shubh Kulshrestha (23SCSE1010443)
