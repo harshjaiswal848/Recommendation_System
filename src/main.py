@@ -27,7 +27,7 @@ def load_data(file_path):
 
 # 2. Data Cleaning
 def clean_data(df):
-    """Handle missing values and remove duplicates."""
+    """Handle missing values, remove duplicates, and handle outliers."""
     # Check for missing values
     print("\nMissing values before cleaning:")
     print(df.isnull().sum())
@@ -35,6 +35,11 @@ def clean_data(df):
     # Drop rows with missing critical columns (e.g., userId, movieId, rating)
     critical_columns = ['userId', 'movieId', 'rating']
     df = df.dropna(subset=critical_columns)
+    
+    # Detect and filter outliers in ratings (expected range: 1–5)
+    outliers = df[~df['rating'].between(1, 5)]
+    print(f"Outliers in rating (outside 1–5): {len(outliers)} rows")
+    df = df[df['rating'].between(1, 5)]  # Filter outliers
     
     # Fill missing non-critical columns with appropriate values (e.g., mean for numerical)
     for col in df.select_dtypes(include=np.number).columns:
