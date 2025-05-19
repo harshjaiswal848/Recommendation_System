@@ -54,7 +54,7 @@ pdflatex presentation.tex
 
 Ensure the plots/ directory contains the visualizations before compiling.
 
-This project is made by our TEAM : "DATA SURFERS"
- Vani Gupta (23SCSE1010474)
- Harsh Jaiswal (23SCSE1011377)
- Shubh Kulshrestha (23SCSE1010443)
+This project is made by our TEAM : "DATA SURFERS",
+ Vani Gupta (23SCSE1010474),
+ Harsh Jaiswal (23SCSE1011377),
+ Shubh Kulshrestha (23SCSE1010443).
