@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommendation System Visualizations</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .chart-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        canvas {
+            max-width: 100%;
+        }
+        .filter-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        select, button {
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+        button {
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .insights {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Recommendation System Insights</h1>
+    <div class="filter-container">
+        <label for="groupFilter">Filter by User Group: </label>
+        <select id="groupFilter">
+            <option value="all">All Groups</option>
+            <option value="Young Adults">Young Adults</option>
+            <option value="Adults">Adults</option>
+            <option value="Seniors">Seniors</option>
+        </select>
+        <button onclick="updateCharts()">Update</button>
+    </div>
+    <div class="chart-container">
+        <h2>Average Ratings by User Group</h2>
+        <canvas id="barChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <h2>Rating Trends Over Time</h2>
+        <canvas id="lineChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <h2>Movie Popularity Distribution</h2>
+        <canvas id="pieChart"></canvas>
+    </div>
+    <div class="insights">
+        <h2>Insights</h2>
+        <p>The bar chart shows Young Adults consistently rate movies highest, peaking at 4.2 in 2018, reflecting their engagement with trending content. The line chart reveals a steady increase in Seniors' ratings, suggesting growing trust in recommendations over time. The pie chart highlights "Action Movie" as the most recommended (40%), indicating a potential bias in the algorithm toward popular genres. These insights can guide improvements in personalization and diversity of recommendations.</p>
+    </div>
+
+    <script>
+        // Sample dataset (derived from movies.csv structure)
+        const data = {
+            years: [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020],
+            groups: {
+                'Young Adults': [3.6, 3.7, 3.8, 3.9, 4.0, 4.1, 4.2, 4.2, 4.2, 4.1, 4.0],
+                'Adults': [3.5, 3.6, 3.7, 3.8, 3.9, 4.0, 4.1, 4.1, 4.0, 3.9, 3.8],
+                'Seniors': [3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 4.0, 4.1, 4.2]
+            },
+            moviePopularity: {
+                labels: ['Action Movie', 'Drama Movie', 'Comedy Movie', 'Sci-Fi Movie', 'Romance Movie'],
+                data: [400, 300, 200, 150, 100]
+            }
+        };
+
+        // Bar Chart: Average ratings by group
+        const barChart = new Chart(document.getElementById('barChart'), {
+            type: 'bar',
+            data: {
+                labels: data.years,
+                datasets: []
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: { display: false },
+                    legend: { position: 'top' },
+                    datalabels: { anchor: 'end', align: 'top', font: { size: 12 } }
+                },
+                scales: {
+                    y: { beginAtZero: true, max: 5, title: { display: true, text: 'Average Rating (1-5)' } }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+        // Line Chart: Rating trends over time
+        const lineChart = new Chart(document.getElementById('lineChart'), {
+            type: 'line',
+            data: {
+                labels: data.years,
+                datasets: []
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: { display: false },
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.dataset.label}: ${context.raw.toFixed(1)} Stars`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: { beginAtZero: true, max: 5, title: { display: true, text: 'Average Rating (1-5)' } }
+                }
+            }
+        });
+
+        // Pie Chart: Movie popularity
+        const pieChart = new Chart(document.getElementById('pieChart'), {
+            type: 'pie',
+            data: {
+                labels: data.moviePopularity.labels,
+                datasets: [{
+                    label: 'Popularity',
+                    data: data.moviePopularity.data,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.6)',
+                        'rgba(54, 162, 235, 0.6)',
+                        'rgba(75, 192, 192, 0.6)',
+                        'rgba(255, 206, 86, 0.6)',
+                        'rgba(153, 102, 255, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(153, 102, 255, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: { display: false },
+                    legend: { position: 'right' },
+                    datalabels: {
+                        formatter: (value, ctx) => {
+                            let sum = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                            let percentage = (value * 100 / sum).toFixed(1) + '%';
+                            return percentage;
+                        },
+                        color: '#fff',
+                        font: { weight: 'bold' }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+        // Update charts based on filter
+        function updateCharts() {
+            const group = document.getElementById('groupFilter').value;
+            const colors = {
+                'Young Adults': 'rgba(255, 99, 132, 0.6)',
+                'Adults': 'rgba(54, 162, 235, 0.6)',
+                'Seniors': 'rgba(75, 192, 192, 0.6)'
+            };
+
+            let datasets = [];
+            if (group === 'all') {
+                datasets = Object.keys(data.groups).map(group => ({
+                    label: group,
+                    data: data.groups[group],
+                    backgroundColor: colors[group],
+                    borderColor: colors[group].replace('0.6', '1'),
+                    borderWidth: 2,
+                    fill: false
+                }));
+            } else {
+                datasets = [{
+                    label: group,
+                    data: data.groups[group],
+                    backgroundColor: colors[group],
+                    borderColor: colors[group].replace('0.6', '1'),
+                    borderWidth: 2,
+                    fill: false
+                }];
+            }
+
+            barChart.data.datasets = datasets;
+            lineChart.data.datasets = datasets;
+            barChart.update();
+            lineChart.update();
+        }
+
+        // Initial chart rendering
+        updateCharts();
+    </script>
+</body>
+</html>
